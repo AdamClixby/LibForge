@@ -20,7 +20,15 @@ namespace LibForge.Texture
       var magic = Int();
       if(magic != 6 && magic != 4)
       {
-        throw new Exception($"Unknown texture magic {magic}");
+        if( magic == 67108864 ||  // 4 endian swapped
+            magic == 100663296 )  // 6 endian swapped
+        {
+          BigEndian = true;
+        }
+        else
+        {
+          throw new Exception($"Unknown texture magic {magic}");
+        }
       }
       var version = Int();
       var hdrData = magic == 6 ? FixedArr(Byte, version == 0xC ? 0x7Cu : 0xACu) : FixedArr(Byte, 0xA8);
